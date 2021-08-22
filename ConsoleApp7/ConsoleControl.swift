@@ -65,7 +65,7 @@ func resizeWindow(width: Int, height: Int) {
     
     
     
-    let i = Int(-2.88539 * ( logC(val: Double(max(height,width)), forBase: 2.71828)-6.93147))
+    let i = Int(-2.88539 * ( logC(val: Double(max(height,width)), forBase: 2.71828)-6.93147 ) )
     
     let source =
 """

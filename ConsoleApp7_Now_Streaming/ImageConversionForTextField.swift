@@ -10,56 +10,92 @@ import Cocoa
 
 class StreamToString {
     
-    /*
-    private struct TextPixel {
-        let char: Character
+    struct TextPixel {
+        let range: NSRange
         let color: NSColor
     }
     
-    private struct TextPixelBW {
-        let char: Character
+    enum LuminanceType: Int {
+        case horizontal, vertical, shaded, letters
     }
-    */
     
-    private let luminanceInfo = "█▇▆▅▄▃▂▁ "
+    
+    private var currentLuminanceType: LuminanceType
+    var luminanceType: LuminanceType {
+        get {
+            currentLuminanceType
+        }
+        set {
+            currentLuminanceType = newValue
+            luminanceValues.removeAll()
+            for c in luminanceTypes[newValue.rawValue] { luminanceValues.append(c) }
+            
+            if range <= luminanceValues.count { range = 255 }
+            
+            divisor = 255 / (luminanceValues.count - 1)
+            factor = 255 / Float(range)
+        }
+    }
+    
+    // also standard in the interface builder
+    private var rsltn = 9
+    var resolution: Int {
+        get {
+            rsltn
+        }
+        set {
+            //if newValue <= 4 { rsltn = 4 }
+            rsltn = newValue
+        }
+    }
+    
+    var hasHighContrast = false
+    
+    private let luminanceTypes = ["█▇▆▅▄▃▂▁", "█▉▊▋▌▍▎", "█▓▒░", "MXYFIi!:."]
     private var luminanceValues: [Character] = [Character]()
     
-    private let divisor: Int
+    private var divisor: Int = 0
     private var range = 255
+
+    private var factor: Float = 0
     
-    private let factor: Float
+    var colorInformation: [TextPixel]?
     
-    init() {
+    init(luminanceType: LuminanceType = .horizontal) {
         
-        for c in luminanceInfo { luminanceValues.append(c) }
-        
-        if range <= luminanceValues.count { range = 255 }
-        
-        divisor = 255 / (luminanceValues.count - 1)
-        factor = 255 / Float(range)
+        self.currentLuminanceType = luminanceType
+        // this also calculates other values, so we need to set that too
+        self.luminanceType = luminanceType
         
     }
     
-    func convertToTextField(image p: inout UnsafeMutablePointer<UInt8>, length: Int, width: Int, height: Int) -> String {
+    func convertToText(image p: UnsafePointer<UInt8>, length: Int, width: Int, height: Int) -> String {
+        
+        let res = rsltn
+        
+        let lv = luminanceValues
         
         var stringImage = String()
+        
+        let scaledH = height / res
+        let scaledW = width / res
         
         // convert the image we just made into strings
         
         let multiplier = factor / Float(divisor)
         
-        for h in 0 ..< height {
+        for h in 0 ..< scaledH {
             var str = String()
             
-            let product = h * width
+            let product = h * res * width
             
-            for w in 0 ..< width {
+            for w in 0 ..< scaledW {
                 
-                let i = (product + width - 1 - w) * 4
+                let i = (product + width - 1 - w * res) * 4
                 
                 let luminance = Float(p[i]) * 0.0722 + Float(p[i + 1]) * 0.7152 + Float(p[i + 2]) * 0.2126
                 
-                str += String( luminanceValues[ Int( luminance * multiplier ) ] ) + " "
+                str += String( lv[ Int( luminance * multiplier ) ] ) + " "
                 
             }
             
@@ -68,7 +104,55 @@ class StreamToString {
         
         return stringImage
         
-        // MARK: END PRINT IMAGE REPRESENTATION
+    }
+    
+    func convertToTextField_Color_Scaled(image p: UnsafePointer<UInt8>, length: Int, width: Int, height: Int) -> String {
+        
+        let res = rsltn
+        
+        var stringImage = String()
+        
+        let scaledH = height / res
+        let scaledW = width / res
+        
+        colorInformation = Array(repeating: TextPixel(range: NSRange(), color: NSColor()), count: scaledH * scaledW)
+        
+        let multiplier = factor / Float(divisor)
+        
+        var l = 0
+        
+        for h in 0 ..< scaledH {
+            
+            var str = String()
+            
+            let product = h * res * width
+            
+            for w in 0 ..< scaledW {
+                
+                let i = (product + width - 1 - w * res) * 4
+                
+                if hasHighContrast {
+                    str += "█ "
+                } else {
+                    let luminance = Float(p[i]) * 0.0722 + Float(p[i + 1]) * 0.7152 + Float(p[i + 2]) * 0.2126
+                    
+                    str += String( luminanceValues[ Int( luminance * multiplier ) ] ) + " "
+                }
+                
+                let r = NSMakeRange((h * scaledW + w) * 2 + h, 1)
+                
+                let color = NSColor(deviceRed: CGFloat(p[i + 2]) / 255, green: CGFloat(p[i + 1]) / 255, blue: CGFloat(p[i]) / 255, alpha: 1 )
+                
+                colorInformation![l] = TextPixel(range: r, color: color)
+                
+                l += 1
+ 
+            }
+            
+            stringImage += str + "\n"
+        }
+        
+        return stringImage
         
     }
     
