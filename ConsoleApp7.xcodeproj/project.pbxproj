@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6A166E0726D5578B00AB8D55 /* ControlCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A166E0626D5578B00AB8D55 /* ControlCells.swift */; };
+		6A166E0826D5715F00AB8D55 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ACC519726B4433B00C39CF9 /* Extensions.swift */; };
 		6A77A66D26D2E19A0029DA36 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A77A66C26D2E19A0029DA36 /* AppDelegate.swift */; };
 		6A77A66F26D2E19A0029DA36 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A77A66E26D2E19A0029DA36 /* SceneDelegate.swift */; };
 		6A77A67426D2E19A0029DA36 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6A77A67226D2E19A0029DA36 /* Main.storyboard */; };
@@ -14,6 +16,9 @@
 		6A77A67926D2E19B0029DA36 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6A77A67726D2E19B0029DA36 /* LaunchScreen.storyboard */; };
 		6A77A68126D2E5090029DA36 /* ConsoleApp7_Mobile.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 6A77A68026D2E5090029DA36 /* ConsoleApp7_Mobile.entitlements */; };
 		6A77A68326D2E6D00029DA36 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A77A67026D2E19A0029DA36 /* ViewController.swift */; };
+		6A77A68526D2EBF00029DA36 /* CameraAssistant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A77A68426D2EBF00029DA36 /* CameraAssistant.swift */; };
+		6A77A68626D2EBF00029DA36 /* CameraAssistant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A77A68426D2EBF00029DA36 /* CameraAssistant.swift */; };
+		6A77A68726D3FCAD0029DA36 /* VideoToText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ACC519A26B4686300C39CF9 /* VideoToText.swift */; };
 		6A9BA8362657BADB00FA10AC /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9BA8352657BADB00FA10AC /* main.swift */; };
 		6A9BA83E2657BAE900FA10AC /* TextEditDisaster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9BA83C2657BAE900FA10AC /* TextEditDisaster.swift */; };
 		6A9BA83F2657BAE900FA10AC /* ImageConversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9BA83D2657BAE900FA10AC /* ImageConversion.swift */; };
@@ -24,7 +29,7 @@
 		6ACC519126B40BE000C39CF9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6ACC518F26B40BE000C39CF9 /* Main.storyboard */; };
 		6ACC519826B4433B00C39CF9 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ACC519726B4433B00C39CF9 /* Extensions.swift */; };
 		6ACC519926B458DD00C39CF9 /* ImageConversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9BA83D2657BAE900FA10AC /* ImageConversion.swift */; };
-		6ACC519B26B4686300C39CF9 /* ImageConversionForTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ACC519A26B4686300C39CF9 /* ImageConversionForTextField.swift */; };
+		6ACC519B26B4686300C39CF9 /* VideoToText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ACC519A26B4686300C39CF9 /* VideoToText.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -40,6 +45,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		6A166E0626D5578B00AB8D55 /* ControlCells.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlCells.swift; sourceTree = "<group>"; };
 		6A1BBEB626B5B4130093DFDF /* ConsoleApp7_Playground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = ConsoleApp7_Playground.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		6A77A66A26D2E19A0029DA36 /* ConsoleApp7_Mobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ConsoleApp7_Mobile.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A77A66C26D2E19A0029DA36 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -50,6 +56,7 @@
 		6A77A67826D2E19B0029DA36 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6A77A67A26D2E19B0029DA36 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6A77A68026D2E5090029DA36 /* ConsoleApp7_Mobile.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ConsoleApp7_Mobile.entitlements; sourceTree = "<group>"; };
+		6A77A68426D2EBF00029DA36 /* CameraAssistant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraAssistant.swift; sourceTree = "<group>"; };
 		6A9BA8322657BADB00FA10AC /* ConsoleApp7 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ConsoleApp7; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A9BA8352657BADB00FA10AC /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		6A9BA83C2657BAE900FA10AC /* TextEditDisaster.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextEditDisaster.swift; sourceTree = "<group>"; };
@@ -65,7 +72,7 @@
 		6ACC519226B40BE000C39CF9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6ACC519326B40BE000C39CF9 /* ConsoleApp7_Now_Streaming.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ConsoleApp7_Now_Streaming.entitlements; sourceTree = "<group>"; };
 		6ACC519726B4433B00C39CF9 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
-		6ACC519A26B4686300C39CF9 /* ImageConversionForTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageConversionForTextField.swift; sourceTree = "<group>"; };
+		6ACC519A26B4686300C39CF9 /* VideoToText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoToText.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,6 +106,7 @@
 				6A77A66C26D2E19A0029DA36 /* AppDelegate.swift */,
 				6A77A66E26D2E19A0029DA36 /* SceneDelegate.swift */,
 				6A77A67026D2E19A0029DA36 /* ViewController.swift */,
+				6A166E0626D5578B00AB8D55 /* ControlCells.swift */,
 				6A77A67226D2E19A0029DA36 /* Main.storyboard */,
 				6A77A67526D2E19B0029DA36 /* Assets.xcassets */,
 				6A77A67726D2E19B0029DA36 /* LaunchScreen.storyboard */,
@@ -148,11 +156,12 @@
 				6ACC518926B40BDE00C39CF9 /* AppDelegate.swift */,
 				6ACC518B26B40BDE00C39CF9 /* ViewController.swift */,
 				6ACC519726B4433B00C39CF9 /* Extensions.swift */,
-				6ACC519A26B4686300C39CF9 /* ImageConversionForTextField.swift */,
+				6ACC519A26B4686300C39CF9 /* VideoToText.swift */,
 				6ACC518D26B40BE000C39CF9 /* Assets.xcassets */,
 				6ACC518F26B40BE000C39CF9 /* Main.storyboard */,
 				6ACC519226B40BE000C39CF9 /* Info.plist */,
 				6ACC519326B40BE000C39CF9 /* ConsoleApp7_Now_Streaming.entitlements */,
+				6A77A68426D2EBF00029DA36 /* CameraAssistant.swift */,
 			);
 			path = ConsoleApp7_Now_Streaming;
 			sourceTree = "<group>";
@@ -282,6 +291,10 @@
 				6A77A68326D2E6D00029DA36 /* ViewController.swift in Sources */,
 				6A77A66D26D2E19A0029DA36 /* AppDelegate.swift in Sources */,
 				6A77A66F26D2E19A0029DA36 /* SceneDelegate.swift in Sources */,
+				6A166E0726D5578B00AB8D55 /* ControlCells.swift in Sources */,
+				6A77A68626D2EBF00029DA36 /* CameraAssistant.swift in Sources */,
+				6A77A68726D3FCAD0029DA36 /* VideoToText.swift in Sources */,
+				6A166E0826D5715F00AB8D55 /* Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -301,9 +314,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				6ACC518C26B40BDE00C39CF9 /* ViewController.swift in Sources */,
+				6A77A68526D2EBF00029DA36 /* CameraAssistant.swift in Sources */,
 				6ACC519926B458DD00C39CF9 /* ImageConversion.swift in Sources */,
 				6ACC519826B4433B00C39CF9 /* Extensions.swift in Sources */,
-				6ACC519B26B4686300C39CF9 /* ImageConversionForTextField.swift in Sources */,
+				6ACC519B26B4686300C39CF9 /* VideoToText.swift in Sources */,
 				6ACC518A26B40BDE00C39CF9 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

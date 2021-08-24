@@ -19,35 +19,17 @@ class ViewController: NSViewController, AVCaptureVideoDataOutputSampleBufferDele
     @IBOutlet weak var resolutionSlider: NSSlider!
     @IBOutlet weak var segmentControl: NSSegmentedControl!
     
-    let captureSession = AVCaptureSession()
-    var videoOutput: AVCaptureVideoDataOutput?
+    var cam: CameraAssistant?
     
-    let imageQueue = DispatchQueue.init(label: "imageQueue", qos: .userInteractive)
-    
-    let streamToString = StreamToString()
+    let videoToText = VideoToText()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        captureSession.beginConfiguration()
-        let videoDevice = AVCaptureDevice.default(.builtInWideAngleCamera,
-                                                  for: .video, position: .unspecified)
-        guard
-            let videoDeviceInput = try? AVCaptureDeviceInput(device: videoDevice!),
-            captureSession.canAddInput(videoDeviceInput)
-            else { return }
-        captureSession.addInput(videoDeviceInput)
+        cam = CameraAssistant(delegate: self)
         
-        videoOutput = AVCaptureVideoDataOutput()
-        guard captureSession.canAddOutput(videoOutput!) else { return }
-        captureSession.sessionPreset = .cif352x288
-        captureSession.addOutput(videoOutput!)
-        captureSession.commitConfiguration()
-        
-        videoOutput?.setSampleBufferDelegate(self, queue: imageQueue)
-        
-        streamToString.resolution = Int(resolutionSlider.maxValue) + 1 - resolutionSlider.integerValue
-        fontSize = CGFloat(streamToString.resolution)
+        videoToText.resolution = Int(resolutionSlider.maxValue) + 1 - resolutionSlider.integerValue
+        fontSize = CGFloat(videoToText.resolution)
         
         textView.delegate = self
         textView.font = .monospacedSystemFont(ofSize: fontSize * 2, weight: .regular)
@@ -57,12 +39,12 @@ class ViewController: NSViewController, AVCaptureVideoDataOutputSampleBufferDele
         
         segmentControl.selectedSegment = 0
         
-        colorFunc = streamToString.convertToText(image:length:width:height:)
+        colorFunc = videoToText.convertToText(image:length:width:height:xOffset:yOffset:xFrame:yFrame:)
         
         formatter.dateStyle = .long
         formatter.timeStyle = .long
         
-        captureSession.startRunning()
+        cam!.captureSession.startRunning()
         
     }
 
@@ -86,7 +68,12 @@ class ViewController: NSViewController, AVCaptureVideoDataOutputSampleBufferDele
         // refrence the data
         let p = CFDataGetBytePtr(d)!
         
-        present( colorFunc!(p, range.length, range.length / (img.height * 4), img.height) )
+        let iHeight = img.height
+        //let iWidth = range.length / (iHeight * 4)
+        
+        // standard for computer
+        present( colorFunc!(p, range.length, range.length / (iHeight * 4), iHeight, 0, 12, -1, iHeight - 24) )
+        //present( colorFunc!(p, range.length, iWidth, iHeight, 30, 12, 150, 200) )
         
     }
     
@@ -98,7 +85,7 @@ class ViewController: NSViewController, AVCaptureVideoDataOutputSampleBufferDele
             
             textView.string = str
             
-            if let colorInfo = streamToString.colorInformation {
+            if let colorInfo = videoToText.colorInformation {
                 
                 for textColor in colorInfo {
                     textView.textStorage?.addAttributes([ NSAttributedString.Key.foregroundColor : textColor.color ], range: textColor.range)
@@ -107,7 +94,7 @@ class ViewController: NSViewController, AVCaptureVideoDataOutputSampleBufferDele
         }
     }
     
-    var colorFunc: ( ( UnsafePointer<UInt8>, Int, Int, Int ) -> String )? = nil
+    var colorFunc: ( ( UnsafePointer<UInt8>, Int, Int, Int, Int, Int, Int, Int ) -> String )? = nil
     var isBW = true
     @IBAction func colorButtonPressed(_ sender: Any) {
         isBW.toggle()
@@ -117,15 +104,16 @@ class ViewController: NSViewController, AVCaptureVideoDataOutputSampleBufferDele
             sliderChanged(resolutionSlider)
         }
         
-        streamToString.colorInformation = nil
+        videoToText.colorInformation = nil
         textView.backgroundColor = isBW ? .white : .black
         
         if isBW {
-            colorFunc = streamToString.convertToText(image:length:width:height:)
+            textView.textColor = .black
+            colorFunc = videoToText.convertToText(image:length:width:height:xOffset:yOffset:xFrame:yFrame:)
             colorModeButton.title = "Multicolor"
             contrastButton.isEnabled = false
         } else {
-            colorFunc = streamToString.convertToTextField_Color_Scaled(image:length:width:height:)
+            colorFunc = videoToText.convertToText_Color_Scaled(image:length:width:height:xOffset:yOffset:xFrame:yFrame:)
             colorModeButton.title = "Black & White"
             contrastButton.isEnabled = true
         }
@@ -150,20 +138,20 @@ class ViewController: NSViewController, AVCaptureVideoDataOutputSampleBufferDele
     
     @IBAction func pauseButtonPressed(_ sender: Any) {
         
-        if captureSession.isRunning {
-            captureSession.stopRunning()
+        if cam!.captureSession.isRunning {
+            cam!.captureSession.stopRunning()
             pauseButton.title = "Continue"
         } else {
-            captureSession.startRunning()
+            cam!.captureSession.startRunning()
             pauseButton.title = "Pause"
         }
         
     }
     
     @IBAction func contrastButtonPressed(_ sender: Any) {
-        streamToString.hasHighContrast.toggle()
+        videoToText.hasHighContrast.toggle()
         
-        if streamToString.hasHighContrast {
+        if videoToText.hasHighContrast {
             contrastButton.title = "Decrease Contrast"
         } else {
             contrastButton.title = "Increase Contrast"
@@ -172,7 +160,7 @@ class ViewController: NSViewController, AVCaptureVideoDataOutputSampleBufferDele
     }
     
     @IBAction func segmentControlChanged(_ sender: NSSegmentedControl) {
-        streamToString.luminanceType = StreamToString.LuminanceType.init(rawValue: sender.selectedSegment)!
+        videoToText.luminanceType = VideoToText.LuminanceType.init(rawValue: sender.selectedSegment)!
     }
     
     var fontSize: CGFloat = 9
@@ -183,8 +171,8 @@ class ViewController: NSViewController, AVCaptureVideoDataOutputSampleBufferDele
             sender.integerValue = 13
         }
         
-        streamToString.resolution = Int(sender.maxValue) + 1 - sender.integerValue
-        fontSize = CGFloat(streamToString.resolution)
+        videoToText.resolution = Int(sender.maxValue) + 1 - sender.integerValue
+        fontSize = CGFloat(videoToText.resolution)
         textView.font = .monospacedSystemFont(ofSize: fontSize * 2, weight: .regular)
     }
     
