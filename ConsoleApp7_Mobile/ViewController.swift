@@ -8,39 +8,34 @@
 import UIKit
 import AVFoundation
 
-class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate, UITableViewDelegate, UITableViewDataSource, UITextViewDelegate {
-
+class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate, UITextViewDelegate, ControlHandling {
+    @IBOutlet weak var captureButton: UIButton!
+    
+    @IBOutlet weak var flipCameraButton: UIButton!
+    
+    @IBOutlet weak var settingsButton: UIButton!
+    
+    @IBOutlet weak var pauseButton: UIButton!
+    
+    @IBOutlet weak var blurView: UIVisualEffectView!
+    
+    @IBOutlet weak var container: UIView!
+    
     @IBOutlet weak var textView: UITextView!
-    @IBOutlet weak var tableView: UITableView!
+    var settingsVC: SettingsViewController?
     
     var cam: CameraAssistant?
     let videoToText = VideoToText()
     
-    private var cell1 = ButtonCell()
-    private var cell2 = ButtonCell()
-    private var slider = UISlider()
-    private var segment = UISegmentedControl()
-    
-    // this is all just so i can copy stuff 1:1 from the macos stuff
-    var pauseButton: UIButton {
-        cell1.button2
-    }
-    
-    var snapshotButton: UIButton {
-        cell1.button1
-    }
-    
-    var contrastButton: UIButton {
-        cell2.button1
-    }
-    
-    var colorModeButton: UIButton {
-        cell2.button2
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        
+        settingsVC = self.children.first as? SettingsViewController
+        settingsVC?.delegate = self
+        settingsVC?.view.alpha = 0
+        settingsVC?.view.layer.cornerRadius = 10
+        settingsVC?.view.clipsToBounds = true
         
         cam = CameraAssistant(delegate: self, sessionPreset: .vga640x480)
         cam?.captureSession.connections.first!.videoOrientation = .portrait
@@ -48,97 +43,34 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         
         textView.delegate = self
         textView.textAlignment = .center
-        
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.rowHeight = 55
-        
-        //contrastButton.isEnabled = false
-        
+       
         colorFunc = videoToText.convertToText(image:length:width:height:xOffset:yOffset:xFrame:yFrame:)
         
-        formatter.dateStyle = .long
-        formatter.timeStyle = .long
+        //formatter.dateStyle = .long
+        //formatter.timeStyle = .long
+        
+        blurView.effect = nil
+        blurView.isHidden = true
+        blurView.alpha = 1
+        
+        textView.backgroundColor = isBW ? .white : .black
+        textView.textColor = .black
+        view.backgroundColor = isBW ? .white : .black
+        
         
         cam?.captureSession.startRunning()
        
         
         
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        if indexPath.section == 0 && indexPath.row == 0 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "ButtonCell") as! ButtonCell
-            
-            cell.configure(f1: snapshot, bttn1: "Snapshot", f2: pause, bttn2: "Pause")
-            
-            cell1 = cell
-            
-            return cell
-        }
-        if indexPath.section == 1 && indexPath.row == 0 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "ButtonCell") as! ButtonCell
-            
-            cell.configure(f1: contrast, bttn1: "Increase Contrast", f2: colorBttn, bttn2: "Multicolor")
-            
-            cell2 = cell
-            
-            return cell
-        }
-        if indexPath.section == 2 && indexPath.row == 0 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "SliderCell") as! SliderCell
-            
-            slider = cell.slider
-            
-            slider.addTarget(self, action: #selector(slide), for: .touchUpInside)
-            
-            slide()
-            
-            return cell
-        }
-        if indexPath.section == 3 && indexPath.row == 0 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "SegmentCell") as! SegmentCell
-            
-            segment = cell.segment
-            
-            segment.addTarget(self, action: #selector(segmentSelected), for: .touchUpInside)
-            
-            return cell
-        }
-        
-        
-        print("non.")
-        return UITableViewCell()
-        
         
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        1
+    override func viewDidAppear(_ animated: Bool) {
+        segmentSelected(index: settingsVC!.segment!.selectedSegmentIndex)
+        sliderChanged(value: settingsVC!.slider!.value)
+        settingsVC?.bttn1?.isEnabled = false
     }
     
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        
-        switch section {
-        case 0:
-            return "Controls"
-        case 1:
-            return "Color Setting"
-        case 2:
-            return "Shading Mode"
-        case 3:
-            return "Resolution"
-        default:
-            print("non.")
-            return "bitch!"
-        }
-        
-    }
-    
-    func numberOfSections(in tableView: UITableView) -> Int {
-        4
-    }
     
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         
@@ -155,7 +87,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         //let iWidth = range.length / (iHeight * 4)
         
         // vga640x480
-        present( colorFunc!(p, range.length, range.length / (iHeight * 4), iHeight, 100, 0, 250, 400) )
+        present( colorFunc!(p, range.length, range.length / (iHeight * 4), iHeight, 50, 0, 250, 400) )
         //present( colorFunc!(p, range.length, iWidth, iHeight, 30, 12, 150, 200) )
         
     }
@@ -176,50 +108,77 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         }
     }
     
+    // 10 -> capture
+    // 20 -> flip
+    // 30 -> settings
+    @IBAction func buttonPressed(_ sender: Any) {
+        
+        let tag = (sender as! UIButton).tag
+        
+        if tag == 30 {
+            
+            blur(blurView)
+        }
+        
+    }
+    
+    
     var colorFunc: ( ( UnsafePointer<UInt8>, Int, Int, Int, Int, Int, Int, Int ) -> String )? = nil
     var isBW = true
-    func colorBttn() {
-        isBW.toggle()
+    
+    // 10 -> Increase Contrast
+    // 20 -> Multicolor
+    func buttonPressed(tag: Int) {
         
-        if !isBW && slider.value >= 13 {
-            slider.value = 13
-            slide()
+        if tag == 10 {
+            videoToText.hasHighContrast.toggle()
         }
         
-        videoToText.colorInformation = nil
-        textView.backgroundColor = isBW ? .white : .black
-        
-        if isBW {
-            textView.textColor = .black
-            colorFunc = videoToText.convertToText(image:length:width:height:xOffset:yOffset:xFrame:yFrame:)
-            colorModeButton.setTitle("Multicolor", for: .normal)
+        if tag == 20 {
+            isBW.toggle()
             
-            contrastButton.isEnabled = false
-        } else {
-            colorFunc = videoToText.convertToText_Color_Scaled(image:length:width:height:xOffset:yOffset:xFrame:yFrame:)
-            colorModeButton.setTitle("Black & White", for: .normal)
-            contrastButton.isEnabled = true
+            if !isBW && settingsVC!.slider!.value >= 13 {
+                settingsVC!.slider!.value = 13
+                segmentSelected(index: Int(settingsVC!.slider!.value))
+            }
+            
+            videoToText.colorInformation = nil
+            textView.backgroundColor = isBW ? .white : .black
+            view.backgroundColor = isBW ? .white : .black
+            
+            if isBW {
+                textView.textColor = .black
+                colorFunc = videoToText.convertToText(image:length:width:height:xOffset:yOffset:xFrame:yFrame:)
+                settingsVC!.bttn2!.setTitle("Multicolor", for: .normal)
+                settingsVC!.bttn1!.isEnabled = false
+            } else {
+                colorFunc = videoToText.convertToText_Color_Scaled(image:length:width:height:xOffset:yOffset:xFrame:yFrame:)
+                settingsVC!.bttn2!.setTitle("Black & White", for: .normal)
+                settingsVC!.bttn1!.isEnabled = true
+            }
         }
+        
     }
     
-    let formatter = DateFormatter()
-    func snapshot() {
-        /*
-        if let file = textView), documentAttributes: [:]), let dir = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first {
-            
-            let fileURL = dir.appendingPathComponent("Snapshot - \(formatter.string(from: NSDate.now)).rtf")
-            
-            //writing
-            do {
-                
-                try file.write(to: fileURL)
-                
-            } catch { print("Could not save the image.") }
+    var fontSize: CGFloat = 4
+    func sliderChanged(value: Float) {
+        
+        // in colormode, we cant go lower
+        if !isBW && settingsVC!.slider!.value >= 13 {
+            settingsVC!.slider!.value = 13
         }
-        */
+        
+        videoToText.resolution = Int(settingsVC!.slider!.maximumValue + 1 - settingsVC!.slider!.value)
+        fontSize = CGFloat(videoToText.resolution)
+        textView.font = .monospacedSystemFont(ofSize: fontSize, weight: .regular)
+        
     }
     
-    func pause() {
+    func segmentSelected(index: Int) {
+        videoToText.luminanceType = VideoToText.LuminanceType.init(rawValue: index)!
+    }
+    
+    @IBAction func pause(_ sender: Any) {
         if cam!.captureSession.isRunning {
             cam!.captureSession.stopRunning()
             pauseButton.setTitle("Continue", for: .normal)
@@ -229,35 +188,31 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         }
     }
     
-    func contrast() {
-        videoToText.hasHighContrast.toggle()
+    @IBAction func flipCamera(_ sender: Any) {
         
-        if videoToText.hasHighContrast {
-            contrastButton.setTitle("Decrease Contrast", for: .normal)
-        } else {
-            contrastButton.setTitle("Increase Contrast", for: .normal)
+        cam?.swapCamera()
+        
+    }
+    
+    
+    
+    func blur(_ view: UIView) {
+        
+        blurView.isHidden = false
+        self.view.bringSubviewToFront(container)
+        
+        if let effectView = view as? UIVisualEffectView {
+            UIView.animate(withDuration: 0.2) { [self] () -> Void in
+                effectView.effect = UIBlurEffect(style: .dark)
+                settingsVC?.view.alpha = 1
+            }
         }
         
-    }
-    
-    @objc func segmentSelected() {
-        videoToText.luminanceType = VideoToText.LuminanceType.init(rawValue: segment.selectedSegmentIndex)!
-    }
-    
-    var fontSize: CGFloat = 4
-    @objc func slide() {
-        
-        // in colormode, we cant go lower
-        if !isBW && slider.value >= 13 {
-            slider.value = 13
-        }
-        
-        videoToText.resolution = Int(slider.maximumValue) + 1 - Int(slider.value)
-        fontSize = CGFloat(videoToText.resolution)
-        textView.font = .monospacedSystemFont(ofSize: fontSize, weight: .regular)
         
     }
     
-
+    
+    
+    
 }
 

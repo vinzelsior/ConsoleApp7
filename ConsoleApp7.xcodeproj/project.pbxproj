@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		6A166E0726D5578B00AB8D55 /* ControlCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A166E0626D5578B00AB8D55 /* ControlCells.swift */; };
 		6A166E0826D5715F00AB8D55 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ACC519726B4433B00C39CF9 /* Extensions.swift */; };
+		6A166E0A26D6A21300AB8D55 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A166E0926D6A21300AB8D55 /* SettingsViewController.swift */; };
+		6A166E0C26D6A27D00AB8D55 /* ControlHandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A166E0B26D6A27D00AB8D55 /* ControlHandling.swift */; };
 		6A77A66D26D2E19A0029DA36 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A77A66C26D2E19A0029DA36 /* AppDelegate.swift */; };
 		6A77A66F26D2E19A0029DA36 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A77A66E26D2E19A0029DA36 /* SceneDelegate.swift */; };
 		6A77A67426D2E19A0029DA36 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6A77A67226D2E19A0029DA36 /* Main.storyboard */; };
@@ -46,6 +48,8 @@
 
 /* Begin PBXFileReference section */
 		6A166E0626D5578B00AB8D55 /* ControlCells.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlCells.swift; sourceTree = "<group>"; };
+		6A166E0926D6A21300AB8D55 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		6A166E0B26D6A27D00AB8D55 /* ControlHandling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlHandling.swift; sourceTree = "<group>"; };
 		6A1BBEB626B5B4130093DFDF /* ConsoleApp7_Playground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = ConsoleApp7_Playground.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		6A77A66A26D2E19A0029DA36 /* ConsoleApp7_Mobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ConsoleApp7_Mobile.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A77A66C26D2E19A0029DA36 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -106,7 +110,9 @@
 				6A77A66C26D2E19A0029DA36 /* AppDelegate.swift */,
 				6A77A66E26D2E19A0029DA36 /* SceneDelegate.swift */,
 				6A77A67026D2E19A0029DA36 /* ViewController.swift */,
+				6A166E0926D6A21300AB8D55 /* SettingsViewController.swift */,
 				6A166E0626D5578B00AB8D55 /* ControlCells.swift */,
+				6A166E0B26D6A27D00AB8D55 /* ControlHandling.swift */,
 				6A77A67226D2E19A0029DA36 /* Main.storyboard */,
 				6A77A67526D2E19B0029DA36 /* Assets.xcassets */,
 				6A77A67726D2E19B0029DA36 /* LaunchScreen.storyboard */,
@@ -293,8 +299,10 @@
 				6A77A66F26D2E19A0029DA36 /* SceneDelegate.swift in Sources */,
 				6A166E0726D5578B00AB8D55 /* ControlCells.swift in Sources */,
 				6A77A68626D2EBF00029DA36 /* CameraAssistant.swift in Sources */,
+				6A166E0C26D6A27D00AB8D55 /* ControlHandling.swift in Sources */,
 				6A77A68726D3FCAD0029DA36 /* VideoToText.swift in Sources */,
 				6A166E0826D5715F00AB8D55 /* Extensions.swift in Sources */,
+				6A166E0A26D6A21300AB8D55 /* SettingsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

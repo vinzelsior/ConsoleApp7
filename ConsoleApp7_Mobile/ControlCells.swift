@@ -12,23 +12,10 @@ class ButtonCell: UITableViewCell {
     @IBOutlet weak var button1: UIButton!
     @IBOutlet weak var button2: UIButton!
     
-    private var f1: () -> Void = {}
-    private var f2: () -> Void = {}
-    
-    func configure(f1: @escaping () -> Void, bttn1: String, f2: @escaping () -> Void, bttn2: String ) {
-        self.f1 = f1
-        self.f2 = f2
+    func configure(bttn1: String, bttn2: String ) {
         
         button1.setTitle(bttn1, for: .normal)
         button2.setTitle(bttn2, for: .normal)
-    }
-    
-    @IBAction func didPress(_ sender: Any) {
-        let bttn = sender as! UIButton
-        
-        if bttn.tag == 10 { f1() }
-        if bttn.tag == 20 { f2() }
-        
     }
     
     
@@ -39,5 +26,12 @@ class SliderCell: UITableViewCell {
 }
 
 class SegmentCell: UITableViewCell {
+    // who even knows...
+    var what: (Int) -> Void = { _ in }
     @IBOutlet weak var segment: UISegmentedControl!
+    
+    @IBAction func didChange(_ sender: Any) {
+        let s = sender as! UISegmentedControl
+        what(s.selectedSegmentIndex)
+    }
 }

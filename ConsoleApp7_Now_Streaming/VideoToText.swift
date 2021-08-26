@@ -206,7 +206,7 @@ class VideoToText {
         let _yOffset = yOffset / res
         let _xOffset = xOffset / res
         
-        let xActualFrame = xFrame / res
+        let xActualFrame = scaledW - _xOffset
         
         #if !os(iOS)
         let clr = NSColor()
