@@ -36,6 +36,8 @@ class CameraAssistant {
         
     }
     
+    // this is not available in macOS, so don't compile it there
+    #if os(iOS)
     func swapCamera() {
         // Begin new session configuration and defer commit
         captureSession.beginConfiguration()
@@ -48,6 +50,7 @@ class CameraAssistant {
             newDevice = captureDevice(with: .front)
         } else {
             newDevice = captureDevice(with: .back)
+            
         }
         
         // Create new capture input
@@ -64,6 +67,12 @@ class CameraAssistant {
         captureSession.addInput(deviceInput)
         
         captureSession.connections.first!.videoOrientation = .portrait
+        
+        if input.device.position == .back {
+            captureSession.connections.first!.isVideoMirrored = false
+        } else {
+            captureSession.connections.first!.isVideoMirrored = true
+        }
         
         captureSession.commitConfiguration()
     }
@@ -83,5 +92,5 @@ class CameraAssistant {
 
         return nil
     }
-    
+    #endif
 }
