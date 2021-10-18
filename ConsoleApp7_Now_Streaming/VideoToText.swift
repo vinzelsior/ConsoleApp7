@@ -62,6 +62,8 @@ class VideoToText {
     
     var hasHighContrast = false
     
+    var continuousPixels = true
+    
     private let luminanceTypes = ["█▇▆▅▄▃▂▁", "█▉▊▋▌▍▎", "█▓▒░", "MXYFIi!:."]
     private var luminanceValues: [Character] = [Character]()
     
@@ -110,79 +112,19 @@ class VideoToText {
                 
                 let luminance = Float(p[i]) * 0.0722 + Float(p[i + 1]) * 0.7152 + Float(p[i + 2]) * 0.2126
                 
-                str += String( lv[ Int( luminance * multiplier ) ] ) + " "
                 
-            }
-            
-            stringImage += str + "\n"
-        }
-        
-        return stringImage
-        
-    }
-    /*
-    func convertToText_Color_Scaled(image p: UnsafePointer<UInt8>, length: Int, width: Int, height: Int, xOffset: Int = -1, yOffset: Int = -1, xFrame: Int = -1, yFrame: Int = -1) -> String {
-        
-        let res = rsltn
-        
-        var stringImage = String()
-        
-        let scaledH = height / res
-        let scaledW = width / res
-        
-        let skipW = xFrame == -1 ? width : xFrame + xOffset
-        let skipH = yFrame == -1 ? height : yFrame + yOffset
-        
-        
-        #if !os(iOS)
-        let clr = NSColor()
-        #else
-        let clr = UIColor()
-        #endif
-        
-        colorInformation = Array(repeating: TextPixel(range: NSRange(), color: clr), count: scaledH * scaledW)
-        
-        let multiplier = factor / Float(divisor)
-        
-        var l = 0
-        
-        for h in 0 ..< scaledH {
-            
-            if h * res <= yOffset { continue }
-            if h * res >= skipH { continue }
-            
-            var str = String()
-            
-            let product = h * res * width
-            
-            for w in 0 ..< scaledW {
+                let stringPixel = String(lv[ Int( luminance * multiplier ) ])
                 
-                if w * res <= xOffset { continue }
-                if w * res >= skipW { continue }
+                str += stringPixel
                 
-                let i = (product + width - 1 - w * res) * 4
-                
-                if hasHighContrast {
-                    str += "█ "
+                if continuousPixels {
+                    str += stringPixel
                 } else {
-                    let luminance = Float(p[i]) * 0.0722 + Float(p[i + 1]) * 0.7152 + Float(p[i + 2]) * 0.2126
-                    
-                    str += String( luminanceValues[ Int( luminance * multiplier ) ] ) + " "
+                    str += " "
                 }
                 
-                let r = NSMakeRange((h * scaledW + w) * 2 + h, 1)
+                //str += String( lv[ Int( luminance * multiplier ) ] ) + " "
                 
-                
-                #if !os(iOS)
-                let color = NSColor(deviceRed: CGFloat(p[i + 2]) / 255, green: CGFloat(p[i + 1]) / 255, blue: CGFloat(p[i]) / 255, alpha: 1 )
-                #else
-                let color = UIColor(red: CGFloat(p[i + 2]) / 255, green: CGFloat(p[i + 1]) / 255, blue: CGFloat(p[i]) / 255, alpha: 1 )
-                #endif
-                
-                colorInformation![l] = TextPixel(range: r, color: color)
-                
-                l += 1
- 
             }
             
             stringImage += str + "\n"
@@ -191,7 +133,6 @@ class VideoToText {
         return stringImage
         
     }
-    */
     
     
     func convertToText_Color_Scaled(image p: UnsafePointer<UInt8>, length: Int, width: Int, height: Int, xOffset: Int = 0, yOffset: Int = 0, xFrame: Int = -1, yFrame: Int = -1) -> String {
@@ -231,15 +172,33 @@ class VideoToText {
                 let i = (product + width - 1 - (w + _xOffset) * res) * 4
                 
                 if hasHighContrast {
-                    str += "█ "
+                    
+                    if continuousPixels {
+                        str += "██"
+                    } else {
+                        str += "█ "
+                    }
+                    
                 } else {
+                    
                     let luminance = Float(p[i]) * 0.0722 + Float(p[i + 1]) * 0.7152 + Float(p[i + 2]) * 0.2126
                     
-                    str += String( luminanceValues[ Int( luminance * multiplier ) ] ) + " "
+                    
+                    if continuousPixels {
+                        
+                        let stringPixel = String( luminanceValues[ Int( luminance * multiplier ) ] )
+                        
+                        str += ( stringPixel + stringPixel )
+                        
+                    } else {
+                        str += String( luminanceValues[ Int( luminance * multiplier ) ] ) + " "
+                    }
+                    
+                    
                 }
                 
                 let hh = h - _yOffset
-                let r = NSMakeRange((hh * xActualFrame + (w - _xOffset)) * 2 + hh, 1)
+                let r = NSMakeRange((hh * xActualFrame + (w - _xOffset)) * 2 + hh, continuousPixels ? 2 : 1)
                 
                 #if !os(iOS)
                 let color = NSColor(deviceRed: CGFloat(p[i + 2]) / 255, green: CGFloat(p[i + 1]) / 255, blue: CGFloat(p[i]) / 255, alpha: 1 )

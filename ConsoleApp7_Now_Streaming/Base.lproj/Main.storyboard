@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="19162" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18122"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19162"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -811,7 +812,7 @@
                                 </customSpacing>
                             </stackView>
                             <stackView distribution="fill" orientation="horizontal" alignment="centerY" spacing="41" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ALj-yu-fOF">
-                                <rect key="frame" x="20" y="90" width="503" height="60"/>
+                                <rect key="frame" x="20" y="90" width="667" height="60"/>
                                 <subviews>
                                     <box borderType="line" title="Controls" translatesAutoresizingMaskIntoConstraints="NO" id="dLq-YM-ukg">
                                         <rect key="frame" x="-3" y="-3" width="206" height="62"/>
@@ -909,12 +910,50 @@
                                             </constraints>
                                         </view>
                                     </box>
+                                    <box title="Image Settings" translatesAutoresizingMaskIntoConstraints="NO" id="L60-Yu-DAx">
+                                        <rect key="frame" x="541" y="-3" width="129" height="62"/>
+                                        <view key="contentView" id="Vuq-x3-0RG">
+                                            <rect key="frame" x="3" y="3" width="123" height="44"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <subviews>
+                                                <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="f0l-hs-11J">
+                                                    <rect key="frame" x="12" y="12" width="99" height="20"/>
+                                                    <subviews>
+                                                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hob-oH-thB">
+                                                            <rect key="frame" x="-7" y="-7" width="113" height="32"/>
+                                                            <buttonCell key="cell" type="push" title="Pixel-Perfect" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Kux-Ym-1zm">
+                                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                <font key="font" metaFont="system"/>
+                                                            </buttonCell>
+                                                            <connections>
+                                                                <action selector="continuousPixelButtonPressed:" target="XfG-lQ-9wD" id="4YT-tA-K8k"/>
+                                                            </connections>
+                                                        </button>
+                                                    </subviews>
+                                                    <visibilityPriorities>
+                                                        <integer value="1000"/>
+                                                    </visibilityPriorities>
+                                                    <customSpacing>
+                                                        <real value="3.4028234663852886e+38"/>
+                                                    </customSpacing>
+                                                </stackView>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="f0l-hs-11J" firstAttribute="leading" secondItem="Vuq-x3-0RG" secondAttribute="leading" constant="12" id="0Ed-08-zXL"/>
+                                                <constraint firstAttribute="bottom" secondItem="f0l-hs-11J" secondAttribute="bottom" constant="12" id="3fK-Fh-VQc"/>
+                                                <constraint firstItem="f0l-hs-11J" firstAttribute="top" secondItem="Vuq-x3-0RG" secondAttribute="top" constant="12" id="67o-v1-95F"/>
+                                                <constraint firstAttribute="trailing" secondItem="f0l-hs-11J" secondAttribute="trailing" constant="12" id="ZJ5-Mv-eb3"/>
+                                            </constraints>
+                                        </view>
+                                    </box>
                                 </subviews>
                                 <visibilityPriorities>
                                     <integer value="1000"/>
                                     <integer value="1000"/>
+                                    <integer value="1000"/>
                                 </visibilityPriorities>
                                 <customSpacing>
+                                    <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
                                 </customSpacing>
@@ -934,6 +973,7 @@
                     </view>
                     <connections>
                         <outlet property="colorModeButton" destination="m9d-4B-OsM" id="vSM-VL-ZI3"/>
+                        <outlet property="continuousPixelButton" destination="hob-oH-thB" id="6dW-Dv-vak"/>
                         <outlet property="contrastButton" destination="Wg3-nD-ctd" id="hWz-Pn-89c"/>
                         <outlet property="pauseButton" destination="Ge9-QB-IVK" id="JXa-bb-Ld1"/>
                         <outlet property="resolutionSlider" destination="LCK-g7-T5g" id="4ol-GP-jJm"/>

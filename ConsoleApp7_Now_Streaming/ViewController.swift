@@ -18,6 +18,7 @@ class ViewController: NSViewController, AVCaptureVideoDataOutputSampleBufferDele
     @IBOutlet weak var contrastButton: NSButton!
     @IBOutlet weak var resolutionSlider: NSSlider!
     @IBOutlet weak var segmentControl: NSSegmentedControl!
+    @IBOutlet weak var continuousPixelButton: NSButton!
     
     var cam: CameraAssistant?
     
@@ -158,6 +159,19 @@ class ViewController: NSViewController, AVCaptureVideoDataOutputSampleBufferDele
         }
         
     }
+    
+    @IBAction func continuousPixelButtonPressed(_ sender: Any) {
+        
+        videoToText.continuousPixels.toggle()
+        
+        if videoToText.continuousPixels {
+            continuousPixelButton.title = "Pixel-Perfect"
+        } else {
+            continuousPixelButton.title = "Continuous Pixels"
+        }
+        
+    }
+    
     
     @IBAction func segmentControlChanged(_ sender: NSSegmentedControl) {
         videoToText.luminanceType = VideoToText.LuminanceType.init(rawValue: sender.selectedSegment)!
