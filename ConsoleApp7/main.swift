@@ -14,7 +14,15 @@ struct ImageSetting {
     var fileName: String = ""
     var colors: UInt8 = 8
     var noCompression: Bool = false
-    var increaseContrast: Bool = false
+    
+    // legacy true sets increaseContrast to false, and continuousPixels to false
+    var legacy: Bool = false
+    
+    // both part of "legacy mode"
+    var increaseContrast: Bool = true
+    var continuousPixels: Bool = true
+    
+    var consoleMode: Bool = false
 }
 
 func resizedImage(at url: URL, for size: CGSize) -> CGImage? {
@@ -63,15 +71,17 @@ If you need help, you can always leave. Or, type \u{001B}[1m-help\u{001B}[0;0m I
 Please, enter a path to an image below. Down there ↓
 """)
 
+var settings = ImageSetting()
+
 while true {
     
     var url: URL?
 
-    var settings = ImageSetting()
-     
     while true {
         
         let line = readLine()
+        
+        clear()
         
         if line == "gay" {
             print("Yes! 🌈")
@@ -129,6 +139,34 @@ while true {
                     
                 }
                 
+                if str.starts(with: "legacy") {
+                    settings.legacy.toggle()
+                    if settings.legacy {
+                        
+                        settings.continuousPixels = false
+                        settings.increaseContrast = false
+                        
+                        print("Legacy Mode enabled. Still looks cool, but it's not the same")
+                    } else {
+                        
+                        settings.continuousPixels = true
+                        settings.increaseContrast = true
+                        
+                        print("Legacy mode disabled. The image will appear in it's true form! 🧿")
+                    }
+                    
+                }
+                
+                if str.starts(with: "console") {
+                    settings.consoleMode.toggle()
+                    if settings.increaseContrast {
+                        print("Switched to console mode. The image will show here.")
+                    } else {
+                        print("Turned off console mode. The image will be saved as an .rtf file.")
+                    }
+                    
+                }
+                
                 if str.starts(with: "help") {
                     
                     print(
@@ -162,6 +200,16 @@ while true {
                         \u{001B}[32;1m-contrast\u{001B}[0;0m
                                                 
                         Calculates the contrast information differently. See for yourself.
+                        ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─
+                        
+                        \u{001B}[32;1m-legacy\u{001B}[0;0m
+                                                                        
+                        Displays the image like it's 1997... or just how it was before the update.
+                        ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─
+                        
+                        \u{001B}[32;1m-console\u{001B}[0;0m
+                                                                                                
+                        Displays the image directly in the console. This mode has a funky way of displaying color.
                         ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─
                         
                         \u{001B}[31;1m-fuckthatbitch\u{001B}[0;0m
@@ -228,10 +276,26 @@ while true {
     // that's all we need (assume 4 components )
     // apparently, we can't just take the width of the image. This results in some weird behaviour. Instead, calculate the width by dividing the length of the range by four, and then by the height
     
-    let stringImage = convertToText(image: p, length: range.length, width: range.length / (imageRef.height * 4), height: imageRef.height, colors: settings.colors, contrast: settings.increaseContrast)
-
-    saveToFile(str: stringImage, file: settings.fileName)
-
+    if settings.consoleMode {
+        
+        let stringImage = convertToConsole(image: p, length: range.length, width: range.length / (imageRef.height * 4), height: imageRef.height, contrast: settings.increaseContrast, continuousPixels: settings.continuousPixels)
+        
+        clear()
+        
+        print(stringImage)
+        
+    } else {
+        
+        let stringImage = convertToText(image: p, length: range.length, width: range.length / (imageRef.height * 4), height: imageRef.height, colors: settings.colors, contrast: settings.increaseContrast, continuousPixels: settings.continuousPixels)
+        
+        saveToFile(str: stringImage, file: settings.fileName)
+        
+    }
+    /*
+    let str = convertToConsole(image: p, length: range.length, width: range.length / (imageRef.height * 4), height: imageRef.height)
+    
+    print(str)
+    */
     p.deallocate()
 
     // counts as deinit?
@@ -239,9 +303,9 @@ while true {
 
     print("\nTo convert another image, press any key.")
     
-    _ = readLine()
+    //_ = readLine()
 
-    clear()
+    
 }
 
 

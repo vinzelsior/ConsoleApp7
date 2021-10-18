@@ -65,7 +65,7 @@ func logC(val: Double, forBase base: Double) -> Double {
 }
 
 
-public func convertToConsole(image p: UnsafeMutablePointer<UInt8>, length: Int, width: Int, height: Int) -> String {
+public func convertToConsole(image p: UnsafeMutablePointer<UInt8>, length: Int, width: Int, height: Int, contrast: Bool, continuousPixels: Bool) -> String {
     
     // with imageIO, it seems the alpha value is the first value in the pixel so its argb
     
@@ -73,9 +73,11 @@ public func convertToConsole(image p: UnsafeMutablePointer<UInt8>, length: Int, 
     
     // MARK: START PRINT IMAGE REPRESENTATION
 
-    let altStr = "█▇▆▅▄▃▂▁ "
+    //let altStr = "█▇▆▅▄▃▂▁ "
+    
+    let toUse: String
 
-    let toUse = altStr
+    if contrast { toUse = "██" } else { toUse = "█▇▆▅▄▃▂▁ " }
     
     var luminanceValues: [Character] = [Character]()
     for c in toUse { luminanceValues.append(c) }
@@ -119,17 +121,36 @@ public func convertToConsole(image p: UnsafeMutablePointer<UInt8>, length: Int, 
     
     var stringImage = ""
     
-    stringImage += "╔" + String(repeating: "═", count: width * 2 - 1) + "╗\n"
+    stringImage += "╔" + String(repeating: "═", count: width * 2) + "╗\n"
     
-    // convert the image we just made into strings
-    for h in 0 ..< height {
-        var str = ""
-        for w in 0 ..< width { str += (String(stringImageRef[h * width + w]) + " ") }
-        // remove the last 
-        stringImage += "║" + str.dropLast() + "║\n"
+    if continuousPixels {
+        
+        for h in 0 ..< height {
+            var str = ""
+            for w in 0 ..< width {
+                
+                let stringPixel = String(stringImageRef[h * width + w])
+                
+                str += (stringPixel + stringPixel)
+                
+            }
+            // remove the last
+            stringImage += "║" + str + "║\n"
+        }
+        
+    } else {
+        
+        // convert the image we just made into strings
+        for h in 0 ..< height {
+            var str = ""
+            for w in 0 ..< width { str += (String(stringImageRef[h * width + w]) + " ") }
+            // remove the last
+            stringImage += "║" + str.dropLast() + "║\n"
+        }
     }
     
-    stringImage += "╚" + String(repeating: "═", count: width * 2 - 1) + "╝\n"
+    
+    stringImage += "╚" + String(repeating: "═", count: width * 2) + "╝\n"
     
     return stringImage
     
@@ -151,7 +172,7 @@ public func limitComponentsOf(_ pixel: UnsafeMutablePointer<UInt8>, offest: Int,
     return ( limitColorComponent(of: pixel[offest * 4 + 1], to: div), limitColorComponent(of: pixel[offest * 4 + 2], to: div), limitColorComponent(of: pixel[offest * 4 + 3], to: div) )
 }
 
-public func convertToText(image p: UnsafeMutablePointer<UInt8>, length: Int, width: Int, height: Int, colors: UInt8, contrast: Bool) -> String {
+public func convertToText(image p: UnsafeMutablePointer<UInt8>, length: Int, width: Int, height: Int, colors: UInt8, contrast: Bool, continuousPixels: Bool) -> String {
     
     // with imageIO, it seems the alpha value is the first value in the pixel so its argb
     
@@ -218,24 +239,61 @@ public func convertToText(image p: UnsafeMutablePointer<UInt8>, length: Int, wid
     
     var stringImage = ""
     
-    stringImage += "\\cf1\\uc0\\u9556" + String(repeating: "\\u9552", count: width * 2 - 1) + "\\u9559\\line"
+    stringImage += "\\cf1\\uc0\\u9556" + String(repeating: "\\u9552", count: width * 2) + "\\u9559\\line"
     
+    // may look a bit bulky, but saves a lot of cycles
+    
+    if continuousPixels {
+        
+        for h in 0 ..< height {
+            var str = ""
+            for w in 0 ..< width {
+                
+                // this repeats the pixel, instead of adding a space
+                let stringPixel = String(stringImageRef[h * width + w])
+                
+                str += (stringPixel + stringPixel)
+                
+            }
+            // remove the last
+            stringImage += "\\cf1\\uc0\\u9553" + str + "\\cf1\\uc0\\u9553\\line"
+        }
+        
+    } else {
+        
+        for h in 0 ..< height {
+            var str = ""
+            for w in 0 ..< width { str += (String(stringImageRef[h * width + w]) + "  ") }
+            // remove the last
+            stringImage += "\\cf1\\uc0\\u9553" + str.dropLast() + "\\cf1\\uc0\\u9553\\line"
+        }
+        
+        
+    }
+    /*
     // convert the image we just made into strings
     for h in 0 ..< height {
         var str = ""
-        for w in 0 ..< width { str += (String(stringImageRef[h * width + w]) + "  ") }
+        for w in 0 ..< width {
+            
+            // this repeats the pixel, instead of adding a space
+            let stringPixel = String(stringImageRef[h * width + w])
+            
+            str += (stringPixel + stringPixel)
+            
+        }
         // remove the last
-        stringImage += "\\cf1\\uc0\\u9553" + str.dropLast() + "\\cf1\\uc0\\u9553\\line"
+        stringImage += "\\cf1\\uc0\\u9553" + str + "\\cf1\\uc0\\u9553\\line"
     }
-    
-    stringImage += "\\cf1\\uc0\\u9562" + String(repeating: "\\u9552", count: width * 2 - 1) + "\\u9565\\line"
+    */
+    stringImage += "\\cf1\\uc0\\u9562" + String(repeating: "\\u9552", count: width * 2) + "\\u9565\\line"
     
     //calculate the fontsize... phew. basically it's y = 1024 *0.5^(x * 0.5), but we want to know x not y.
     let fontSize = Int(-2.88539 * ( logC(val: Double(max(height,width)), forBase: 2.71828)-6.93147))
     
     // multiplication by 20 to compensate for twips
     // fontsize * x to compensate for the scrollbar and window
-    let windowW = 20 * width * fontSize + fontSize * 10
+    let windowW = 20 * width * fontSize + fontSize * 20
     let windowH = 20 * height * fontSize + fontSize * 240
 
     let preamble =
